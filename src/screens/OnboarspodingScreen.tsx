@@ -23,12 +23,6 @@ const on2 = require('../assets/on_2.png');
 const on3 = require('../assets/on_3.png');
 const on4 = require('../assets/on_4.png');
 
-// Базовая позиция кнопки от низа карточки
-const BUTTON_BASE_BOTTOM = 16;
-
-// Насколько поднять кнопку ВЫШЕ
-const BUTTON_LIFT_UP = 49;
-
 type PageItem = {
   key: string;
   image: any;
@@ -114,33 +108,29 @@ export default function OnboardingScreen({ navigation }: Props) {
 
     const heroWidth = Math.min(width - side * 2, 520);
     const heroHeight = compact
-      ? Math.min(height * 0.46, 320)
+      ? Math.min(height * 0.42, 300)
       : small
-      ? Math.min(height * 0.52, 400)
-      : Math.min(height * 0.58, 500);
+      ? Math.min(height * 0.48, 360)
+      : Math.min(height * 0.54, 430);
 
     const cardRadius = compact ? 18 : small ? 20 : 22;
     const cardPadX = compact ? 14 : 16;
     const cardPadTop = compact ? 14 : small ? 16 : 18;
+    const cardPadBottom = compact ? 16 : 18;
 
     const titleSize = compact ? 18 : small ? 19 : 21;
     const descSize = compact ? 11.5 : small ? 12.2 : 13.2;
     const descLine = compact ? 17 : small ? 18 : 20;
 
-    const ctaHeight = compact ? 38 : 40;
+    const ctaHeight = compact ? 40 : 42;
     const ctaMinWidth = compact ? 154 : 168;
     const ctaPadX = compact ? 18 : 24;
 
     const dotsGap = compact ? 8 : 10;
     const dotsTop = compact ? 12 : 14;
 
-    const panelBottom = Math.max(insets.bottom + 12, 18) + (compact ? 22 : 28);
-
-    // Нижний padding карточки фиксированный, чтобы кнопка не "компенсировала" смещение
-    const cardPadBottom = ctaHeight + 30;
-
-    // Итоговая позиция кнопки
-    const ctaBottom = BUTTON_BASE_BOTTOM + BUTTON_LIFT_UP;
+    const buttonTop = compact ? 14 : 16;
+    const panelBottom = Math.max(insets.bottom + 10, 16);
 
     return {
       side,
@@ -158,8 +148,8 @@ export default function OnboardingScreen({ navigation }: Props) {
       ctaPadX,
       dotsGap,
       dotsTop,
+      buttonTop,
       panelBottom,
-      ctaBottom,
     };
   }, [compact, small, width, height, insets.bottom]);
 
@@ -278,7 +268,7 @@ export default function OnboardingScreen({ navigation }: Props) {
     animateTo(pageIndex + 1);
   }, [animateTo, navigation, pageIndex]);
 
-  const heroShift = compact ? -18 : small ? -24 : -30;
+  const heroShift = compact ? -12 : small ? -18 : -24;
 
   return (
     <ImageBackground source={bg} resizeMode="cover" style={styles.root}>
@@ -356,14 +346,7 @@ export default function OnboardingScreen({ navigation }: Props) {
               })}
             </View>
 
-            <View
-              style={[
-                styles.ctaAbsoluteWrap,
-                {
-                  bottom: ui.ctaBottom,
-                },
-              ]}
-            >
+            <View style={[styles.ctaFlowWrap, { marginTop: ui.buttonTop }]}>
               <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
                 <Pressable
                   onPress={handleNext}
@@ -413,7 +396,6 @@ const styles = StyleSheet.create({
   },
 
   panel: {
-    position: 'relative',
     backgroundColor: 'rgba(92, 53, 176, 0.78)',
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.14)',
@@ -443,12 +425,9 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
 
-  ctaAbsoluteWrap: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
+  ctaFlowWrap: {
     alignItems: 'center',
-    zIndex: 50,
+    justifyContent: 'center',
   },
 
   cta: {
@@ -469,7 +448,7 @@ const styles = StyleSheet.create({
   },
 
   ctaText: {
-    color: '#FFFFFF', 
+    color: '#FFFFFF',
     fontSize: 13,
     fontWeight: '800',
   },
